@@ -55,11 +55,11 @@ function weatherHandler(request, response) {
 function trailsHandler(request, response) {
   superagent(
     // `https://www.hikingproject.com/data/get-trails-by-id?ids=${request.query.id}&key=${process.env.TRAIL_API_KEY}`
-    `https://www.hikingproject.com/data/get-trails?lat=${request.query.latitude}&lon=${request.query.longitude}&key=${process.env.TRAIL_API_KEY}`
+    `https://www.hikingproject.com/data/get-trails?lat=${request.query.latitude}&lon=${request.query.longitude}&maxDistance=4000&key=${process.env.TRAIL_API_KEY}`
     )
-    .then((trailData) => {
+    .then((trailRes) => {
       // console.log(trailData);
-      const trailDataArr = trailData.body.trails.map((trailData) => {
+      const trailDataArr = trailRes.body.trails.map((trailData) => {
         return new Trail(trailData);
       });
       response.status(200).json(trailDataArr);
@@ -89,8 +89,8 @@ function Trail(trailData) {
   this.summary = trailData.summary;
   this.trail_url = trailData.url;
   this.conditions = trailData.conditionDetails;
-  this.condition_date = trailData.conditionDate.toDateString();
-  this.condition_time = trailData.conditionDate.toTimeString();
+  this.condition_date = trailData.conditionDate.split(" ")[0];
+  this.condition_time = trailData.conditionDate.split(" ")[1];
 }
 
 //Error Handlers:
